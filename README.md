@@ -1,64 +1,55 @@
-# Cordova Test
-Yes, in your project root, you'll create a new Cordova project. Here's a step-by-step guide with more detailed instructions to ensure everything is clear:
+# Cordova App Template
+Using Cordova we can build native apps using any frontend web framework such as Angular. The final result is a Android .aab file or an iOS file that can be uploaded to the Google Play Store or Apple App Store.
 
-1. **Install Cordova**: If you haven't installed Cordova yet, you can install it globally:
 
-   ```bash
-   npm install -g cordova
-   ```
+## Angular for the User Interface
+npm run build
 
-2. **Create a New Cordova Project**: Navigate to your Angular project's root directory and create a new Cordova project inside it. This will create a Cordova project with the necessary directory structure.
+We can put any HTML, CSS, and JS into the Cordova project. So in your Angular build it is importaqnt we note the location of the output and the location of the input for Cordova.
 
-   ```bash
-   cd /path/to/your/angular-project
-   cordova create cordova-project
-   cd cordova-project
-   ```
+This is why we need to do this in the Cordova build steps so we get recent files.
+```
+cp -r dist/cordovatest/* cordova-project/www/
+```
 
-3. **Add the Android Platform**: Add the Android platform to your Cordova project:
 
-   ```bash
-   cordova platform add android
-   ```
+## Android (.aab)
+npm run build:android
+```
+ng build && cp -r dist/cordovatest/* cordova-project/www/ && cd cordova-project && cordova build android --release
+```
 
-4. **Build Your Angular App**: Navigate back to your Angular project directory and build your Angular app for production:
 
-   ```bash
-   cd ..
-   ng build --prod
-   ```
+## iOS
+npm run build:ios
 
-   This will create a `dist/your-app-name` directory with your Angular build files.
+```
+ng build && cp -r dist/cordovatest/* cordova-project/www/ && cd cordova-project && cordova build ios --release
+```
 
-5. **Copy Angular Build Files to Cordova**: Copy the contents of the Angular `dist/your-app-name` directory to the `www` directory of your Cordova project:
+This will give error on Linux/Windows saying xcodebuild was not found. Please install version 11.0.0 or greater from App Store. This is why are going to use https://codemagic.io/ to build on a Mac. The documentation for CodeMagic says to add a codemagic.yaml to the project root.
 
-   ```bash
-   cp -r dist/your-app-name/* cordova-project/www/
-   ```
 
-6. **Build the Cordova Project for Android**: Navigate back to your Cordova project directory and build the project:
+## How to Setup a New Project
+```
+npm install -g cordova
+cordova create cordova-project
+cd cordova-project
+cordova platform add android
+cd ..
+ng build --prod
+cd cordova-project
+cordova build android --release
+```
 
-   ```bash
-   cd cordova-project
-   cordova build android --release
-   ```
+**Sign the AAB File**: If you don't already have a keystore, create one with this command:
 
-7. **Generate an AAB File**: To generate an Android App Bundle (AAB) file, use the following command:
+```
+keytool -genkey -v -keystore my-release-key.keystore -keyalg RSA -keysize 2048 -validity 10000 -alias my-key-alias
+```
 
-   ```bash
-   cordova build android --release -- --packageType=bundle
-   ```
+Then, sign the AAB file using the `jarsigner` tool:
 
-   This will create an AAB file in the `platforms/android/app/build/outputs/bundle/release/` directory.
-
-8. **Sign the AAB File**: If you don't already have a keystore, create one with this command:
-
-   ```bash
-   keytool -genkey -v -keystore my-release-key.keystore -keyalg RSA -keysize 2048 -validity 10000 -alias my-key-alias
-   ```
-
-   Then, sign the AAB file using the `jarsigner` tool:
-
-   ```bash
-   jarsigner -verbose -sigalg SHA256withRSA -digestalg SHA-256 -keystore my-release-key.keystore platforms/android/app/build/outputs/bundle/release/app-release.aab my-key-alias
-   ```
+```
+jarsigner -verbose -sigalg SHA256withRSA -digestalg SHA-256 -keystore my-release-key.keystore platforms/android/app/build/outputs/bundle/release/app-release.aab my-key-alias
+```

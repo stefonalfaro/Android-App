@@ -5,8 +5,8 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
-    "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "build:android": "ng build && cp -r dist/cordovatest/* cordova-project/www/ && cd cordova-project && cordova build android --release",
+    "build:ios":"ng build && cp -r dist/cordovatest/* cordova-project/www/ && cd cordova-project && cordova build ios --release"
   },
   "private": true,
   "dependencies": {
