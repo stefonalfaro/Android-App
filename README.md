@@ -18,6 +18,22 @@ npm run build:android
 ```
 ng build && cp -r dist/cordovatest/* cordova-project/www/ && cd cordova-project && cordova build android --release
 ```
+This .aab file can be directly uploaded to Google Play store. From what I remember we do not need to sign it ourselves, Google handles the signing of it.
+
+### Keystore
+In our home directory we made a keystore 
+```
+stefonalfaro@pop-os:~$ keytool -genkey -v -keystore my-release-key.jks -keyalg RSA -keysize 2048 -validity 10000 -alias my-key-alias
+```
+
+### Convert .aab to .apk and sign
+This is done if we do not upload to the Google Play Store. The Play Store requires the .aab whereas the phone needs an .apk and it needs to be signed. So this is how we can generate a signed .apk ourselves.
+```
+stefonalfaro@pop-os:~$ java -jar bundletool.jar build-apks --bundle=/home/stefonalfaro/Documents/CodeLearning/Angular/cordovatest/cordova-project/platforms/android/app/build/outputs/bundle/release/app-release.aab --output=/home/stefonalfaro/Documents/CodeLearning/Angular/cordovatest/cordova-project/platforms/android/app/build/outputs/bundle/release/app-release.apks --mode=universal --ks=my-release-key.jks --ks-key-alias=my-key-alias
+```
+
+### CIDI Merge Master
+How can we automatically deploy to Production (Apple App Store) from our CI/DI scripts when we merge a PR to Master?
 
 
 ## iOS
@@ -28,6 +44,9 @@ ng build && cp -r dist/cordovatest/* cordova-project/www/ && cd cordova-project 
 ```
 
 This will give error on Linux/Windows saying xcodebuild was not found. Please install version 11.0.0 or greater from App Store. This is why are going to use https://codemagic.io/ to build on a Mac. The documentation for CodeMagic says to add a codemagic.yaml to the project root.
+
+### CIDI Merge Master
+How can we automatically deploy to Production (Google Play Store) from our CI/DI scripts when we merge a PR to Master?
 
 
 ## How to Setup a New Project
